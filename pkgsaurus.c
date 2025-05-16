@@ -6,6 +6,8 @@
 #include "user/user.h"
 
 #include "kernel/fcntl.h"
+
+
 int append_to_file(char *filename, char *text)
 {
   int fd, n;
@@ -374,10 +376,33 @@ printf("                            /,`--'~\\--'~\\\n");
 printf("\033[0m\n\n\n");
 
 printf("\n\033[34;1mCreated by:\n\n\033[3;32mSamer Elhossany 221001697\033[0m\n\n\033[3;32;1mZahraa Gwyly 221000968\n\n\033[3;32;1mMustafa Adel 221002165\n\n\033[3;32;1mMohamed Ahmed 2210021705\n\n\033[3;32;1mYoussef Abbas 221000189\n\n\n\033[1;34mspecial thanks for: \033[0m\n\n\033[3;36;1m1)Dr Eman\033[0m\n\n\033[3;36;1m2)Eng Gannat\033[3;36;1m\033[0m\n\n\033[3;36;1m3)Eng mourad\033[0m\n");
-
 }
 
-
+int list_is_valid(int argc , char *argv[]){
+  if (argc>2) {
+    printf("\033[31;1mInvalid command: max 2 arguments\033[0m\n\n");
+    return 0;
+  }  
+  return 1;
+}
+void list()
+{
+  int fd = open("pkgsaurusList.txt", O_RDONLY); 
+  if (fd < 0)
+    {
+      printf("\033[31;1mERROR in opening \033[4m\"pkgsaurusList.txt\"\033[0m\n");
+      return ;
+    }
+  char buf[512];  
+  int n;
+  while ((n = read(fd, buf, sizeof(buf)))>0)
+  {
+    buf[n] = '\0';            
+    printf("%s", buf); 
+  }
+  close(fd);
+  return;
+}
 
 
 
@@ -397,7 +422,7 @@ credits();
 //printf("\033[31;1mInvalid command!!\033[0m\n");
 //exit(1);//exit with error, remember guys that 1 always mean error
 }
-else if(strcmp("init",argv[1])==0)
+else if (strcmp("init",argv[1])==0)
 {
     if (argc>2)
     {
@@ -448,7 +473,9 @@ printf("upgrading package\n");
 }
 else if(strcmp("list",argv[1])==0)
 {
+if (list_is_valid(argc, argv) == 1){
 printf("Listing packages\n");
+list();}
 }
 else
 {
