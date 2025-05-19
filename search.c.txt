@@ -1,0 +1,72 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <dirent.h>
+#include <ctype.h>
+
+#define PKGDB_PATH "./pkgdb/"
+#define MAX_LINE 256
+
+int strcasestr_match(const char *haystack, const char *needle) {
+    char h[MAX_LINE], n[MAX_LINE];
+    strncpy(h, haystack, MAX_LINE);
+    strncpy(n, needle, MAX_LINE);
+    for (int i = 0; h[i]; i++) h[i] = tolower(h[i]);
+    for (int i = 0; n[i]; i++) n[i] = tolower(n[i]);
+    return strstr(h, n) != NULL;
+}
+
+void search_package(const char *keyword) {
+    DIR *dir = opendir(PKGDB_PATH);
+    if (!dir) {
+        perror("Failed to open pkgdb directory");
+        return;
+    }
+
+    struct dirent *entry;
+    int found = 0;
+
+    while ((entry = readdir(dir)) != NULL) {
+        if (entry->d_type != DT_REG || !strstr(entry->d_name, ".pkg"))
+            continue;
+
+        char filepath[512];
+        snprintf(filepath, sizeof(filepath), "%s%s", PKGDB_PATH, entry->d_name);
+
+        FILE *fp = fopen(filepath, "r");
+        if (!fp) continue;
+
+        char name[100] = "", version[50] = "", description[200] = "";
+        char line[MAX_LINE];
+
+        while (fgets(line, sizeof(line), fp)) {
+            if (strncmp(line, "name:", 5) == 0)
+                sscanf(line, "name: %[^\n]", name);
+            else if (strncmp(line, "version:", 8) == 0)
+                sscanf(line, "version: %[^\n]", version);
+            else if (strncmp(line, "description:", 12) == 0)
+                sscanf(line, "description: %[^\n]", description);
+        }
+        fclose(fp);
+
+        if (strcasestr_match(name, keyword) || strcasestr_match(description, keyword)) {
+            printf("%-20s %-10s %s\n", name, version, description);
+            found = 1;
+        }
+    }
+
+    if (!found)
+        printf("No matching packages found.\n");
+
+    closedir(dir);
+}
+
+int main(int argc, char *argv[]) {
+    if (argc != 3 || strcmp(argv[1], "search") != 0) {
+        fprintf(stderr, "Usage: %s search <keyword>\n", argv[0]);
+        return 1;
+    }
+
+    search_package(argv[2]);
+    return 0;
+}
