@@ -1,0 +1,121 @@
+#include "kernel/types.h"
+#include "user/user.h"
+#include "crc32.h"
+void write_checksum(const char *pkg_path) {
+    int fd = open(pkg_path, O_RDONLY);
+    if (fd < 0) {
+        printf("Error: cannot open package file %s\n", pkg_path);
+        return;
+    }
+
+    char buf[512];
+    int n;
+    unsigned int crc = 0;
+
+    while ((n = read(fd, buf, sizeof(buf))) > 0) {
+        crc = crc32((unsigned char*)buf, n);
+    }
+    close(fd);
+
+    char cksum_path[128];
+    snprintf(cksum_path, sizeof(cksum_path), "%s.cksum", pkg_path);
+    int cfd = open(cksum_path, O_CREATE | O_WRONLY);
+    if (cfd < 0) {
+        printf("Error: cannot create checksum file\n");
+        return;
+    }
+    write(cfd, &crc, sizeof(crc));
+    close(cfd);
+    printf("Checksum written to %s\n", cksum_path);
+}
+
+void verify_checksum(const char *pkg_path) {
+    int fd = open(pkg_path, O_RDONLY);
+    if (fd < 0) {
+        printf("Error: cannot open package file %s\n", pkg_path);
+        return;
+    }
+
+    char buf[512];
+    int n;
+    unsigned int calc_crc = 0;
+    while ((n = read(fd, buf, sizeof(buf))) > 0) {
+        calc_crc = crc32((unsigned char*)buf, n);
+    }
+    close(fd);
+
+    char cksum_path[128];
+    snprintf(cksum_path, sizeof(cksum_path), "%s.cksum", pkg_path);
+    int cfd = open(cksum_path, O_RDONLY);
+    if (cfd < 0) {
+        printf("Error: checksum file not found: %s\n", cksum_path);
+        return;
+    }
+
+    unsigned int stored_crc;
+    if (read(cfd, &stored_crc, sizeof(stored_crc)) != sizeof(stored_crc)) {
+        printf("Error: failed to read checksum data\n");
+        close(cfd);
+        return;
+    }
+    close(cfd);
+
+    if (calc_crc == stored_crc) {
+        printf("OK: %s is verified\n", pkg_path);
+    } else {
+        printf("CORRUPTED: %s does not match checksum\n", pkg_path);
+    }
+}
+
+int main(int argc, char *argv[]) {
+    if (argc < 3) {
+        printf("Usage:\n");
+        printf("  pkg install <filepath>\n");
+        printf("  pkg verify <filepath>\n");
+        exit(1);
+    }
+
+    if (strcmp(argv[1], "install") == 0) {
+       
+        int src = open(argv[2], O_RDONLY);
+        if (src < 0) {
+            printf("Error: cannot open source file %s\n", argv[2]);
+            exit(1);
+        }
+
+        char *name = argv[2];
+        for (char *p = argv[2]; *p; p++) {
+            if (*p == '/')
+                name = p + 1;
+        }
+
+        char dest_path[64];
+        snprintf(dest_path, sizeof(dest_path), "/pkg/%s", name);
+
+        int dest = open(dest_path, O_CREATE | O_WRONLY);
+        if (dest < 0) {
+            printf("Error: cannot create destination file %s\n", dest_path);
+            close(src);
+            exit(1);
+        }
+
+        char buf[512];
+        int n;
+        while ((n = read(src, buf, sizeof(buf))) > 0) {
+            write(dest, buf, n);
+        }
+
+        close(src);
+        close(dest);
+
+        printf("Package installed at %s\n", dest_path);
+        write_checksum(dest_path);
+
+    } else if (strcmp(argv[1], "verify") == 0) {
+        verify_checksum(argv[2]);
+    } else {
+        printf("Unknown command: %s\n", argv[1]);
+    }
+
+    exit(0);
+}
