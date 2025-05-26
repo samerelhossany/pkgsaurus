@@ -15,8 +15,14 @@ Mohamed Hassan Ahmed (221001705)
 
 Mustafa Adel Abdullah (221002165)
 
-Dr Eman Kamel 
-Operating Systems csci315
+# special thanks for: 
+## Dr Eman Kamel 
+
+## Eng Gannat Elsayed Sharaf Elden
+
+## Eng Mohamed Samir Mourad
+
+## Operating Systems csci315
 
 
 # 1. Introduction
@@ -128,7 +134,7 @@ Images for the program execution:
 
 
 
-![Screenshot 2025-05-26 020439](https://github.com/user-attachments/assets/303ffb59-4570-42d0-9df7-0a5f5ba8ffd9)
+
 
 ![Screenshot 2025-05-26 020448](https://github.com/user-attachments/assets/7bbc7850-b011-4680-81d4-ce548f93e30d)
 
