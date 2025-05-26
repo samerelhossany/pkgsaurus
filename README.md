@@ -3,27 +3,32 @@
 
  
 
-Team Members
+## Team Members
+
  Samer Ahmed Elhossany (221001697)
+ 
  Alzahraa Saeed Gwyly (221000968)
+ 
 Youssef Ehab Abbas (221000189)
+
 Mohamed Hassan Ahmed (221001705)
+
 Mustafa Adel Abdullah (221002165)
 
 Dr Eman Kamel 
 Operating Systems csci315
 
 
-#1. Introduction
+# 1. Introduction
 The Pkgsaurus project is a customized package manager designed specifically for the xv6 operating system. The primary goal of Pkgsaurus is to automate the process of installing, updating, removing, and managing software packages within the xv6 environment, addressing a critical gap in xv6’s ecosystem.
 
-##1.1 What is a Package Manager?
+## 1.1 What is a Package Manager?
 A package manager is a command-line or graphical tool that automates the installation, updating, and removal of software packages. It ensures dependency resolution, version control, and efficient software management. Package managers can be categorized into two types:
 -  OS-based package managers (e.g., APT, YUM, Homebrew, Chocolatey) – Manage system-level packages.
 - Language-based package managers (e.g., pip, npm) Handle libraries and modules for specific programming languages.
 Since xv6 lacks a native package manager, Pkgsaurus fills this gap by providing essential package management functionalities.
 
-#2. Project Overview
+# 2. Project Overview
 Pkgsaurus is a lightweight yet powerful package manager tailored for xv6. Its key features include:
 - Installation & Removal of packages.
 - Updating & Upgrading packages to newer versions.
@@ -32,24 +37,24 @@ Pkgsaurus is a lightweight yet powerful package manager tailored for xv6. Its ke
 - CRC Verification to ensure file integrity.
 - Custom Commands (e.g., `draw`) for additional functionalities.
 
-##2.1 Why xv6?
+## 2.1 Why xv6?
 xv6 is a simple, Unix-like teaching OS used in academic courses. However, it lacks a built-in package manager, making software management cumbersome. Pkgsaurus solves this by introducing a structured way to handle packages in xv6.
 
 
 
-#3. Functionalities
+# 3. Functionalities
 Pkgsaurus offers a variety of functions to streamline package management in xv6.
 
-##3.1 Documentation Function
+## 3.1 Documentation Function
 - Command: `pkgsaurus`
 - Displays a help menu with usage instructions.
 - Ensures users understand available commands and syntax.
 
-##3.2 Draw Function
+## 3.2 Draw Function
 - Command: `pkgsaurus draw <drawing>`
 - A fun, experimental feature that allows users to generate ASCII-based drawings in the terminal.
 
-##3.3 Initialization Function
+## 3.3 Initialization Function
 - Sets up the necessary directories and files:
   - `RegistryFile.txt` (tracks installed packages).
   - `pkgsaurusList.txt` (lists available packages).
@@ -58,40 +63,40 @@ Pkgsaurus offers a variety of functions to streamline package management in xv6.
   - `Pkgsaurus_packages/` (stores installed packages).
 - Creates sample packages (`calculator`, `count10`, `testing`) for demonstration.
 
-##3.4 Binary File Creation for xv6
+## 3.4 Binary File Creation for xv6
 A unique challenge was embedding executable binaries in xv6. The process involved:
 1. Writing C code and compiling it inside xv6 (added to the Makefile).
 2. Converting the executable to a header file using `xxd -i <executable> > executable.h`.
 3. Embedding the binary data in a C program to regenerate the executable at runtime.
 
-##3.5 Install Function
+## 3.5 Install Function
 - Command: `pkgsaurus install <package>`
 - Steps:
   1. Checks `pkgsaurusList` for package availability.
   2. Updates `RegistryFile.txt` with the new package.
   3. Copies the package to `Pkgsaurus_packages/`.
 
-##3.6 Search Function
+## 3.6 Search Function
 - Command: `pkgsaurus search <package>`
 - Searches `pkgsaurusList.txt` for matching packages.
 
-##3.7 Remove Function
+## 3.7 Remove Function
 - Command: `pkgsaurus remove <package>`
 - Steps:
   1. Deletes the package from `Pkgsaurus_packages/`.
   2. Updates `RegistryFile.txt` by removing the entry.
 
-##3.8 Update & Upgrade Functions
+## 3.8 Update & Upgrade Functions
 - Update: `pkgsaurus update`  
   Compares installed packages with server versions and populates the `Upgradable list`.
 - Upgrade: `pkgsaurus upgrade`  
   Installs newer versions from the `Upgradable list` using the `install` function.
 
-##3.9 List Function
+## 3.9 List Function
 - Command: `pkgsaurus list`  
   Displays all installed packages from `RegistryFile.txt`.
 
-##3.10 CRC Verification
+## 3.10 CRC Verification
 - Ensures file integrity by:
   1. Calculating a checksum for every 128 bytes of a file (`write_crc`).
   2. Storing checksums in `.cksum` files (e.g., `ls.cksum`).
@@ -112,11 +117,17 @@ A unique challenge was embedding executable binaries in xv6. The process involve
 - Graphical Interface: A user-friendly TUI for easier interaction.
 - Extended Commands: More utility functions (e.g., `pkgsaurus info` for package details).
 
- #6. Conclusion
+ # 6. Conclusion
 
 Pkgsaurus successfully introduces a functional package manager to xv6, simplifying software management in an otherwise minimal OS. As Craig Reucassel said, "It's hardware that makes a machine fast. It's software that makes a fast machine slow." Pkgsaurus ensures that software management in xv6 remains efficient and user-friendly.
 
 Images for the program execution: 
+
+
+
+
+
+
 ![Screenshot 2025-05-26 020439](https://github.com/user-attachments/assets/303ffb59-4570-42d0-9df7-0a5f5ba8ffd9)
 
 ![Screenshot 2025-05-26 020448](https://github.com/user-attachments/assets/7bbc7850-b011-4680-81d4-ce548f93e30d)
